@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -203,7 +202,10 @@ const Index = () => {
         const data = JSON.parse(saved);
         const savedTime = new Date(data.timestamp);
         const now = new Date();
-        if (now - savedTime < 60 * 60 * 1000) {
+        const timeDiff = now.getTime() - savedTime.getTime();
+
+        // Only use cached data if it's less than 1 hour old
+        if (timeDiff < 60 * 60 * 1000) {
           setUserData(data.userData);
           fillFormWithUserData(data.userData);
         }
