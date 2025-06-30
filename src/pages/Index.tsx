@@ -233,6 +233,7 @@ const Index = () => {
       
       // Get the current domain dynamically
       const currentDomain = window.location.origin;
+      console.log('Redirecting to:', currentDomain);
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -246,6 +247,7 @@ const Index = () => {
       });
 
       if (error) {
+        console.error('Google sign-in error:', error);
         toast({
           title: "Google sign-in failed",
           description: "Please try again.",
@@ -253,6 +255,7 @@ const Index = () => {
         });
       }
     } catch (error) {
+      console.error('Authentication error:', error);
       toast({
         title: "Authentication error",
         description: error.message,
