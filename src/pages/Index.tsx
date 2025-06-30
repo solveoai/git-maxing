@@ -930,12 +930,12 @@ const Index = () => {
         href="https://bolt.new"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 transition-transform hover:scale-105"
+        className="fixed bottom-6 right-6 z-50 transition-transform hover:scale-110"
       >
         <img
           src="/image.png"
           alt="Powered by Bolt.new"
-          className="w-16 h-16 rounded-full shadow-lg border-2 border-gray-600 hover:border-gray-400 transition-colors"
+          className="w-24 h-24 rounded-full shadow-xl border-3 border-gray-600 hover:border-gray-400 transition-colors"
         />
       </a>
     </div>
