@@ -10,7 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration
 const supabaseUrl = "https://ctjknzdjkqlqokryered.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0amtuemRqa3FscW9rcnllcmVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3OTQ4MjMsImV4cCI6MjA2NjM3MDgyM30.ulCw7UKS4v-yItzoa-eDJkUe8vS0nT_ZwB9wRXKJViM";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsImtpZCI6Ikl4STRYdU4yZldxZlZZYjIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0amtuemRqa3FscW9rcnllcmVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3OTQ4MjMsImV4cCI6MjA2NjM3MDgyM30.ulCw7UKS4v-yItzoa-eDJkUe8vS0nT_ZwB9wRXKJViM";
 
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -41,9 +41,27 @@ const Index = () => {
     initializeAuth();
   }, []);
 
+  // Get the current domain dynamically
+  const getCurrentDomain = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.origin;
+    }
+    return 'http://localhost:3000'; // fallback
+  };
+
   // Initialize authentication
   const initializeAuth = async () => {
     try {
+      // Check if we're coming back from OAuth with tokens in the URL
+      const urlParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = urlParams.get('access_token');
+      
+      if (accessToken) {
+        console.log('Found access token in URL, processing authentication...');
+        // Clear the URL hash to clean up the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         console.error('Session error:', error);
@@ -57,7 +75,7 @@ const Index = () => {
       }
 
       supabase.auth.onAuthStateChange((event, session) => {
-        console.log('Auth state changed:', event);
+        console.log('Auth state changed:', event, session?.user?.email);
         handleAuthState(session);
       });
 
@@ -232,8 +250,8 @@ const Index = () => {
       setIsLoading(true);
       
       // Get the current domain dynamically
-      const currentDomain = window.location.origin;
-      console.log('Redirecting to:', currentDomain);
+      const currentDomain = getCurrentDomain();
+      console.log('Current domain for redirect:', currentDomain);
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -250,7 +268,7 @@ const Index = () => {
         console.error('Google sign-in error:', error);
         toast({
           title: "Google sign-in failed",
-          description: "Please try again.",
+          description: "Please try again. Make sure the domain is configured in Supabase.",
           variant: "destructive",
         });
       }
@@ -470,6 +488,16 @@ const Index = () => {
           </div>
         </div>
       </nav>
+
+      {/* Debug Info - Remove this in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4 m-6">
+          <h3 className="text-yellow-300 font-semibold mb-2">Debug Info:</h3>
+          <p className="text-yellow-200 text-sm">Current Domain: {getCurrentDomain()}</p>
+          <p className="text-yellow-200 text-sm">Auth Status: {isAuthenticated ? 'Authenticated' : 'Not Authenticated'}</p>
+          <p className="text-yellow-200 text-sm">User: {currentUser?.email || 'None'}</p>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6">
@@ -938,7 +966,7 @@ const Index = () => {
         <img
           src="/image.png"
           alt="Powered by Bolt.new"
-          className="w-24 h-24 rounded-full shadow-xl border-3 border-gray-600 hover:border-gray-400 transition-colors"
+          className="w-32 h-32 rounded-full shadow-xl border-4 border-gray-600 hover:border-gray-400 transition-colors"
         />
       </a>
     </div>
