@@ -434,7 +434,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative">
       {/* Navigation */}
       <nav className="relative z-10 px-6 py-4 bg-gray-900/50 backdrop-blur-sm border-b border-gray-700">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -924,6 +924,20 @@ const Index = () => {
           </div>
         )}
       </div>
+
+      {/* Bolt.new Badge - Fixed Bottom Right */}
+      <a
+        href="https://bolt.new"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 transition-transform hover:scale-105"
+      >
+        <img
+          src="/image.png"
+          alt="Powered by Bolt.new"
+          className="w-16 h-16 rounded-full shadow-lg border-2 border-gray-600 hover:border-gray-400 transition-colors"
+        />
+      </a>
     </div>
   );
 };
